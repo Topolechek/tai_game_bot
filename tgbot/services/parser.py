@@ -16,12 +16,14 @@ def all_games_reg(reg):
             name = dictionary[0].split(':')[1][1:]
         price = dictionary[10].split(':')[1]
         id_game = dictionary[12].split(':')[1]
-        if reg == 'https://psprices.com/region-us/collection/most-wanted-deals?platform=Switch' or reg == 'https://psprices.com/region-us/collection/lowest-prices-ever?platform=Switch':
+        if len(dictionary[14]) < 58:
             imag = dictionary[14][9:] + ',' + dictionary[15] + ',' + dictionary[16] + ',' + dictionary[17] + ',' + \
                    dictionary[18] + ',' + dictionary[19] + ',' + dictionary[20][:-1]
-            discount = dictionary[23].split(':')[1]
         else:
             imag = dictionary[14][9:-1]
+        if reg == 'https://psprices.com/region-us/collection/most-wanted-deals?platform=Switch' or reg == 'https://psprices.com/region-us/collection/lowest-prices-ever?platform=Switch':
+            discount = dictionary[23].split(':')[1]
+        else:
             discount = dictionary[17].split(':')[1]
         open_shop = 'https://psprices.com/game/buy/' + id_game
         q.append(name)
