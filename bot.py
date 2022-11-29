@@ -12,7 +12,10 @@ from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
 from tgbot.middlewares.environment import EnvironmentMiddleware
 
+
 logger = logging.getLogger(__name__)
+
+
 
 
 def register_all_middlewares(dp, config):

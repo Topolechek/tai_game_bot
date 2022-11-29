@@ -6,7 +6,8 @@ from aiogram.utils.markdown import hcode
 async def bot_echo(message: types.Message):
     text = message.text
 
-    await message.answer(f'Неизвестная команда - <i>{text}</i>', parse_mode=types.ParseMode.HTML)
+    await message.answer(f'Для начала нажмите кнопку: "Отмена"' '\n'
+                         f'Или выполните команду: /start')
 
 
 async def bot_echo_all(message: types.Message, state: FSMContext):
@@ -16,7 +17,8 @@ async def bot_echo_all(message: types.Message, state: FSMContext):
         'Содержание сообщения:',
         hcode(message.text)
     ]
-    await message.answer('\n'.join(text))
+    await message.answer(f'Для начала нажмите кнопку: "Отмена"' '\n'
+                         f'Или выполните команду: /start')
 
 
 def register_echo(dp: Dispatcher):

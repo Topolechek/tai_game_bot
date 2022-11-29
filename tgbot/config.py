@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 
 from environs import Env
@@ -48,3 +49,4 @@ def load_config(path: str = None):
         ),
         misc=Miscellaneous()
     )
+

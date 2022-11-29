@@ -1,16 +1,24 @@
+from datetime import datetime
+
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message
 
 from tgbot.keyboards.keybrd import kb_menu, all_menu
 from tgbot.misc import Level
+from tgbot.services.db_api.db_command import BotDB
 from tgbot.services.parser import all_games_reg
+
+BotDB = BotDB('users_log.db')
 
 
 # start/cancel
 async def user_start(message: Message):
+    if BotDB.user_exists(message.chat.id) == False:
+        BotDB.add_user(message.chat.id, message.chat.first_name, datetime.now())
     await message.answer(f"Привет {message.chat.first_name}!", reply_markup=kb_menu)
     await Level.region.set()
+
 
 # choise region
 async def us_menu_sale(message: Message, state: FSMContext):
@@ -27,12 +35,11 @@ async def us_menu_sale(message: Message, state: FSMContext):
     await Level.category.set()
 
 
-
-
 async def alls_games_ev(message: Message, state: FSMContext):
     data = await state.get_data()
     reg_ans = data.get('reg_ans')
-    cat_ans = message.text if message.text in ['10 дешевле чем когда либо', '10 самых популярных', 'Полный список скидок'] else '10 дешевле чем когда либо'
+    cat_ans = message.text if message.text in ['10 дешевле чем когда либо', '10 самых популярных',
+                                               'Полный список скидок'] else '10 дешевле чем когда либо'
     if reg_ans == 'Скидки USA🇺🇸':
         addr = 'https://psprices.com/region-us'
     if reg_ans == 'Скидки PL🇵🇱':
@@ -49,7 +56,6 @@ async def alls_games_ev(message: Message, state: FSMContext):
     if cat_ans == 'Полный список скидок':
         ess = '/collection/lowest-prices-ever?platform=Switch'
         coun = 36
-
 
     sit = addr + ess
     game = all_games_reg(sit)
@@ -70,6 +76,7 @@ async def alls_games_ev(message: Message, state: FSMContext):
                              disable_notification=True)
 
         await state.update_data(cat_ans=None)
+
 
 def register_user(dp: Dispatcher):
     # base
