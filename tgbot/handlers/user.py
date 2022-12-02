@@ -42,7 +42,7 @@ async def alls_games_ev(message: Message, state: FSMContext):
     data = await state.get_data()
     reg_ans = data.get('reg_ans')
     cat_ans = message.text if message.text in ['10 дешевле чем когда либо', '10 самых популярных',
-                                               'Полный список скидок'] else '10 дешевле чем когда либо'
+                                               'Полный список скидок', '10 новых скидок'] else '10 дешевле чем когда либо'
     if reg_ans == 'Скидки USA🇺🇸':
         addr = 'https://psprices.com/region-us'
     if reg_ans == 'Скидки PL🇵🇱':
@@ -59,6 +59,9 @@ async def alls_games_ev(message: Message, state: FSMContext):
     if cat_ans == 'Полный список скидок':
         ess = '/collection/lowest-prices-ever?platform=Switch'
         coun = 36
+    if cat_ans == '10 новых скидок':
+        ess = '/collection/last-24h-deals?platform=Switch'
+        coun = 10
 
     sit = addr + ess
     game = all_games_reg(sit)
