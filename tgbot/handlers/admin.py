@@ -11,10 +11,11 @@ async def count_usr(message: Message):
 
 async def all_usr(message: Message):
     for i in BotDB.all_db():
-        await message.answer(f'id: {i[0]}, name: {i[2]}, join: {i[3].split(" ")[0]}')
+        await message.answer(f'id: {i[0]}, name: {i[2]}, join: {i[3].split(" ")[0]}',
+                             disable_notification=True)
 
 
 def register_admin(dp: Dispatcher):
     dp.register_message_handler(admin_start, commands=["start"], state="*", is_admin=True)
-    dp.register_message_handler(count_usr, text="count", state="*", is_admin=True)
-    dp.register_message_handler(all_usr, text="data", state="*", is_admin=True)
+    dp.register_message_handler(count_usr, commands=["Count"], state="*", is_admin=True)
+    dp.register_message_handler(all_usr, commands=["Data"], state="*", is_admin=True)

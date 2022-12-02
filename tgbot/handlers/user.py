@@ -14,11 +14,11 @@ BotDB = BotDB('users_log.db')
 
 # start/cancel
 async def user_start(message: Message):
-    if BotDB.user_exists(message.chat.id) == False:
+    if not BotDB.user_exists(message.chat.id):
         BotDB.add_user(message.chat.id, message.chat.first_name, datetime.now())
+        print('awq')
     await message.answer(f"Привет {message.chat.first_name}!", reply_markup=kb_menu)
     await Level.region.set()
-
 
 # choise region
 async def us_menu_sale(message: Message, state: FSMContext):
@@ -36,6 +36,9 @@ async def us_menu_sale(message: Message, state: FSMContext):
 
 
 async def alls_games_ev(message: Message, state: FSMContext):
+    addr = ''
+    ess = ''
+    coun = 0
     data = await state.get_data()
     reg_ans = data.get('reg_ans')
     cat_ans = message.text if message.text in ['10 дешевле чем когда либо', '10 самых популярных',
@@ -68,7 +71,7 @@ async def alls_games_ev(message: Message, state: FSMContext):
         valut = {'Скидки USA🇺🇸': '$', 'Скидки PL🇵🇱': 'zł', 'Скидки UK🇬🇧': '£'}
         await message.answer(f'[{name}]'
                              f'({imag})' + '\n'
-                                           f'{"🔥" if (disc.isnumeric() and int(disc) > 50) else ""}Скидка: [{disc if disc.isnumeric() else ""}] %' + '\n'
+                                           f'{"🔥" if (int(disc) > 50) else ""}Скидка: [{disc}] %' + '\n'
                                                                                                                                                       f'Цена сейчас: {valut[reg_ans]}[{price}]' + '\n'
                                                                                                                                                                                                   f'[Купить]'
                                                                                                                                                                                                   f'({site})',
