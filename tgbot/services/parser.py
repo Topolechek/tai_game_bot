@@ -5,6 +5,8 @@ from tgbot.services.price_rub import get_currency_price
 
 val = get_currency_price()
 print(val)
+
+
 def all_games_reg(reg):
     alls = []
     q = []
@@ -60,7 +62,6 @@ def game_search(text_search):
         for el in html.select('.grid > .component--game-card '):
             title = el.attrs['data-props']
             dictionary = title.split(",")
-            print(dictionary)
             for i in dictionary:
                 if '"name"' in i:
                     name = i.split('"')[3] + f' {cash[rgn]}'
@@ -90,8 +91,6 @@ def game_search(text_search):
                 list_pl.append(price)
                 list_pl.append(discount)
                 rub = round(float(price) * float(val['zl']))
-                print(float(val['zl']))
-                print(rub)
                 list_pl.append(rub)
                 prom.append(list_pl)
                 list_pl = []
@@ -109,7 +108,6 @@ def game_search(text_search):
         alls.append(prom)
         prom = []
 
-    print(alls)
     if len(alls[0]) != 0 or len(alls[1]) != 0 or len(alls[2]) != 0:
         return alls
     else:

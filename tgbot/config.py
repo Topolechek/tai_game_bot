@@ -37,7 +37,7 @@ def load_config(path: str = None):
 
     return Config(
         tg_bot=TgBot(
-            token=env.str("BOT_TOKEN"),
+            token=env.str('BOT_TOKEN'),
             admin_ids=list(map(int, env.list("ADMINS"))),
             use_redis=env.bool("USE_REDIS"),
         ),
@@ -49,3 +49,4 @@ def load_config(path: str = None):
         ),
         misc=Miscellaneous()
     )
+

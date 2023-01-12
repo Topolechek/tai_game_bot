@@ -22,6 +22,6 @@ async def all_usr(message: Message):
 
 def register_admin(dp: Dispatcher):
     # admin menu
-    dp.register_message_handler(admin_actions, text="admin", state="*", is_admin=True)
+    dp.register_message_handler(admin_actions, text="Admin", state="*", is_admin=True)
     dp.register_message_handler(count_usr, text="Count", state="*", is_admin=True)
     dp.register_message_handler(all_usr, text="Data", state="*", is_admin=True)

@@ -8,9 +8,9 @@ from tgbot.keyboards.keybrd import kb_menu, all_menu, anyway, reset
 from tgbot.misc import Level
 from tgbot.services.db_api.db_command import BotDB
 from tgbot.services.parser import all_games_reg, game_search
+from tgbot.services.write_file import update_req
 
 BotDB = BotDB('users_log.db')
-
 
 # start/cancel
 async def user_start(message: Message):
@@ -51,6 +51,10 @@ async def alls_games_ev(message: Message, state: FSMContext):
         addr = 'https://psprices.com/region-pl'
     if reg_ans == 'Скидки UK🇬🇧':
         addr = 'https://psprices.com/region-gb'
+
+    x = str(reg_ans[7:-2]) + ' ' + str(message.chat.first_name) + ' ' + str(datetime.now().strftime('%d.%m %H:%M:%S')) + '\n'
+    update_req(x)
+    print(reg_ans[:-2], message.chat.first_name, datetime.now().strftime('%d.%m %H:%M:%S'))
 
     if cat_ans == '10 дешевле чем когда либо':
         ess = '/collection/lowest-prices-ever?platform=Switch'
@@ -103,7 +107,9 @@ async def search_game_level_2(message: Message, state: FSMContext):
         await message.answer(f'Ничего не найдено, попробуйте по-другому', reply_markup=reset)
     elif len(search[0]) > 16:
         await message.answer(f'Список игр слишком длинный, напишите название конкретнее.', reply_markup=anyway)
+        print('Games found')
     else:
+        print('Games found')
         for lst in search:
             for game in lst:
                 name = game[0]
@@ -120,14 +126,15 @@ async def search_game_level_2(message: Message, state: FSMContext):
 async def search_game_anyway(message: Message, state: FSMContext):
     data = await state.get_data()
     text_for_search = data.get('text_for_search')
+    print(text_for_search)
     search = game_search(text_for_search)
     valut = {'🇺🇸': '$', '🇵🇱': 'zł', '🇬🇧':'£'}
     if search == 'err0r':
         await message.answer(f'Ничего не найдено, попробуйте по-другому')
     else:
+        print('Games found')
         for lst in search:
             for game in lst:
-                print(game)
                 name = game[0]
                 price = game[1]
                 disc = game[2]
@@ -163,7 +170,3 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(search_game_anyway, text='Все равно показать', state=Level.search)
     dp.register_message_handler(search_game, text='Напишу по-другому', state="*")
     dp.register_message_handler(search_game_level_2, state=Level.search)
-
-
-
-
