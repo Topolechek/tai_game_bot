@@ -8,6 +8,9 @@ kb_menu = ReplyKeyboardMarkup(
             KeyboardButton(text='Скидки UK🇬🇧'),
         ],
         [
+            KeyboardButton(text='Скидки со всего мира')
+        ],
+        [
             KeyboardButton(text=f'Поиск')
         ],
         [

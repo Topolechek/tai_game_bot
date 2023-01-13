@@ -8,9 +8,11 @@ from tgbot.keyboards.keybrd import kb_menu, all_menu, anyway, reset
 from tgbot.misc import Level
 from tgbot.services.db_api.db_command import BotDB
 from tgbot.services.parser import all_games_reg, game_search
+from tgbot.services.praser_esp import all_games_esp
 from tgbot.services.write_file import update_req
 
 BotDB = BotDB('users_log.db')
+
 
 # start/cancel
 async def user_start(message: Message):
@@ -52,7 +54,8 @@ async def alls_games_ev(message: Message, state: FSMContext):
     if reg_ans == 'Скидки UK🇬🇧':
         addr = 'https://psprices.com/region-gb'
 
-    x = str(reg_ans[7:-2]) + ' ' + str(message.chat.first_name) + ' ' + str(datetime.now().strftime('%d.%m %H:%M:%S')) + '\n'
+    x = str(reg_ans[7:-2]) + ' ' + str(message.chat.first_name) + ' ' + str(
+        datetime.now().strftime('%d.%m %H:%M:%S')) + '\n'
     update_req(x)
     print(reg_ans[:-2], message.chat.first_name, datetime.now().strftime('%d.%m %H:%M:%S'))
 
@@ -81,20 +84,19 @@ async def alls_games_ev(message: Message, state: FSMContext):
         await message.answer(f'[{name}]'
                              f'({imag})' + '\n'
                                            f'{"🔥" if (int(disc) > 50) else ""} Скидка: [{disc}] %' + '\n'
-                                                                                                     f'Цена сейчас: {valut[reg_ans]}[{price}]' + '\n'
-                                                                                                                                                 f'[Купить]'
-                                                                                                                                                 f'({site})',
+                                                                                                      f'Цена сейчас: {valut[reg_ans]}[{price}]' + '\n'
+                                                                                                                                                  f'[Купить]'
+                                                                                                                                                  f'({site})',
                              parse_mode='Markdown',
                              disable_notification=True)
 
         await state.update_data(cat_ans=None)
 
 
-
-
 async def search_game(message: Message, state: FSMContext):
     await message.answer('Введите название игры')
     await Level.search.set()
+
 
 async def search_game_level_2(message: Message, state: FSMContext):
     text_for_search = message.text
@@ -117,18 +119,20 @@ async def search_game_level_2(message: Message, state: FSMContext):
                 disc = game[2]
                 rub = game[3]
                 await message.answer(f'{name}' + '\n'
-                                               f'{"🔥" if (int(disc) > 50) else ""} Скидка: {disc + "%" if int(disc) > 0 else "Отсутствует"}' + '\n'
-                                                                                                         f'Цена сейчас: {valut[name[-2:]]} {price}' + '\n'
-                                                                                                                        f'Цена в рублях: {rub}', reply_markup=reset, parse_mode='Markdown',
-                                 disable_notification=True)
+                                                 f'{"🔥" if (int(disc) > 50) else ""} Скидка: {disc + "%" if int(disc) > 0 else "Отсутствует"}' + '\n'
+                                                                                                                                                  f'Цена сейчас: {valut[name[-2:]]} {price}' + '\n'
+                                                                                                                                                                                               f'Цена в рублях: {rub}',
+                                     reply_markup=reset, parse_mode='Markdown',
+                                     disable_notification=True)
                 await state.reset_state(with_data=False)
+
 
 async def search_game_anyway(message: Message, state: FSMContext):
     data = await state.get_data()
     text_for_search = data.get('text_for_search')
     print(text_for_search)
     search = game_search(text_for_search)
-    valut = {'🇺🇸': '$', '🇵🇱': 'zł', '🇬🇧':'£'}
+    valut = {'🇺🇸': '$', '🇵🇱': 'zł', '🇬🇧': '£'}
     if search == 'err0r':
         await message.answer(f'Ничего не найдено, попробуйте по-другому')
     else:
@@ -141,12 +145,26 @@ async def search_game_anyway(message: Message, state: FSMContext):
                 rub = game[3]
                 await message.answer(f'{name}' + '\n'
                                                  f'{"🔥" if (int(disc) > 50) else ""} Скидка: {disc + "%" if int(disc) > 0 else "Отсутствует"}' + '\n'
-                                                                                                                                                 f'Цена сейчас: {valut[name[-2:]]} {price}' + '\n'
-                                                                                                                                                                            f'Цена в рублях: {rub}',
+                                                                                                                                                  f'Цена сейчас: {valut[name[-2:]]} {price}' + '\n'
+                                                                                                                                                                                               f'Цена в рублях: {rub}',
                                      reply_markup=reset, parse_mode='Markdown',
                                      disable_notification=True)
         await message.answer(f'Всё 🙂')
     await state.reset_state(with_data=False)
+
+
+async def all_reg_sale(message: Message):
+    game = all_games_esp()
+    for i in game:
+        name = i[0]
+        price = i[1]
+        imag = i[2]
+        region = i[3]
+        await message.answer(f'[{name}]({imag})' + '\n'
+                                                         f'Цена сейчас: {price}' + '\n'
+                                                                        f'Регион: {region[1]}{region[0]}' + '\n',
+                             reply_markup=reset, parse_mode='Markdown',
+                             disable_notification=True)
 
 
 
@@ -158,6 +176,8 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(user_start, text='Отмена', state="*")
     dp.register_message_handler(user_start, text='В начало', state="*")
 
+    # All regions
+    dp.register_message_handler(all_reg_sale, text='Скидки со всего мира', state="*")
 
     # first menu choise region
     dp.register_message_handler(us_menu_sale, text='Скидки USA🇺🇸', state=Level.region)
